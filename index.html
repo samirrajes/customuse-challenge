@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customuse Challenge</title>
+  </head>
+  <body>
+    <div id="ui">
+      <div class="uiTitle">
+        <h1>Customuse Challenge</h1>
+        <div class="hint">Drag & drop or browse</div>
+      </div>
+
+      <div class="dropZone" id="avatarDrop">
+        <div class="dzHead">
+          <div class="label">Avatar</div>
+          <div class="formats">.glb / .gltf</div>
+        </div>
+        <div class="dzBody">
+          <div class="prompt">Drop an avatar file here.</div>
+          <button class="btn" id="avatarBrowseBtn" type="button">Browse</button>
+          <input class="fileInput" type="file" id="avatarInput" accept=".glb,.gltf" />
+        </div>
+        <div class="preview" id="avatarPreview" style="display:none;">
+          <div class="name" id="avatarName"></div>
+          <div class="meta">
+            <span class="pill"><span class="dot" id="avatarDot"></span><span id="avatarState">Not loaded</span></span>
+            <span id="avatarSize"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dropZone" id="accessoryDrop">
+        <div class="dzHead">
+          <div class="label">Accessory</div>
+          <div class="formats">.glb / .gltf</div>
+        </div>
+        <div class="dzBody">
+          <div class="prompt">Drop an accessory file here.</div>
+          <button class="btn" id="accessoryBrowseBtn" type="button">Browse</button>
+          <input class="fileInput" type="file" id="accessoryInput" accept=".glb,.gltf" />
+        </div>
+        <div class="preview" id="accessoryPreview" style="display:none;">
+          <div class="name" id="accessoryName"></div>
+          <div class="meta">
+            <span class="pill"><span class="dot" id="accessoryDot"></span><span id="accessoryState">Not loaded</span></span>
+            <span id="accessorySize"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btnPrimary" id="downloadBtn" disabled type="button">Download combined GLB</button>
+      </div>
+
+      <div id="status">Load an avatar, then an accessory.</div>
+    </div>
+
+    <div id="canvasWrap"></div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
