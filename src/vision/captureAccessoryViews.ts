@@ -23,7 +23,7 @@ export function captureAccessoryViewsIsolated(
   scene.background = new THREE.Color(0x000000);
 
   // Flat lighting (no shadows; textures should remain visible)
-  scene.add(new THREE.AmbientLight(0xffffff, 10.0));
+  scene.add(new THREE.AmbientLight(0xffffff, 6.0));
   scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.9));
 
   // Clone accessory so we don’t mutate the visible scene object

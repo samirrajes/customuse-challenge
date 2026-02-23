@@ -486,6 +486,21 @@ function computeWorldStats(pointsLocal: THREE.Vector3[], posWorld: THREE.Vector3
   return { yMin, centerX: 0.5 * (minX + maxX), centerY: 0.5 * (yMin + yMax), centerZ: 0.5 * (minZ + maxZ) };
 }
 
+function computeTopBandCentroidWorld(
+  pointsLocal: THREE.Vector3[],
+  geom: AccessoryGeom,
+  posWorld: THREE.Vector3,
+  qWorld: THREE.Quaternion,
+  scale: THREE.Vector3,
+  yLoFrac = 0.78,
+  yHiFrac = 1.0,
+  xStripFrac = 0.28
+) {
+  const band = computeBandCentroid(pointsLocal, geom, yLoFrac, yHiFrac, xStripFrac);
+  const centroidWorld = worldFromPosePoint(band.centroid, posWorld, qWorld, scale, new THREE.Vector3());
+  return { centroidWorld, count: band.count };
+}
+
 function computeDepthQuantileForPose(
   pointsLocal: THREE.Vector3[],
   posWorld: THREE.Vector3,
@@ -884,6 +899,7 @@ export function placeAccessoryByAnchorBandFit(
   // Pass B: apply placement shifts on top of selected yaw without re-running yaw search.
   const finalPosWorld = bestYaw.posWorld.clone();
   let capeTopDeltaY = 0;
+  let cloakScaleMode: "hangBlend" | "legacy" = "legacy";
   let cloakClaspBand = "n/a";
   let cloakZShift = 0;
   let neckHoleFitUsed = false;
@@ -898,14 +914,35 @@ export function placeAccessoryByAnchorBandFit(
     }
 
     if (drapeSubtype === "Cloak") {
-      // Simplified cloak placement: assume symmetry and center on avatar X/Z.
-      const stats1 = computeWorldStats(pointsLocal, finalPosWorld, bestYaw.qWorld, scaleLocal);
-      finalPosWorld.x += avatarCenter.x - stats1.centerX;
-      finalPosWorld.z += avatarCenter.z - stats1.centerZ;
+      // Align top band of cloak near neck/back-of-head region.
+      const topBand = computeTopBandCentroidWorld(pointsLocal, geom, finalPosWorld, bestYaw.qWorld, scaleLocal, 0.78, 1.0, 0.28);
+      const neckBase = anchorFrames.points.neck?.clone() ?? anchorFrames.points.shoulderMid.clone();
+      const neckLift = Math.max(0.01, anchorFrames.measures.torsoHeight * 0.04);
+      const neckBack = Math.max(0.004, anchorFrames.measures.torsoDepth * 0.08);
+      const targetTop = neckBase.clone().addScaledVector(frame.up, neckLift).addScaledVector(frame.back, neckBack);
 
-      cloakClaspBand = "centerXZ";
-      neckHoleFitUsed = false;
-      neckHoleSamples = 0;
+      if (topBand.count > 0) {
+        const delta = targetTop.sub(topBand.centroidWorld);
+        const dx = THREE.MathUtils.clamp(delta.dot(frame.right), -0.2, 0.2);
+        const dy = THREE.MathUtils.clamp(delta.dot(frame.up), -0.12, 0.12);
+        const dz = THREE.MathUtils.clamp(delta.dot(frame.back), -0.16, 0.16);
+        finalPosWorld
+          .addScaledVector(frame.right, dx)
+          .addScaledVector(frame.up, dy)
+          .addScaledVector(frame.back, dz);
+
+        cloakClaspBand = "top22->neck(+up,+back)";
+        neckHoleFitUsed = !!anchorFrames.points.neck;
+        neckHoleSamples = topBand.count;
+        cloakScaleMode = "hangBlend";
+      } else {
+        // Fallback: center cloak around avatar X/Z if top-band sample fails.
+        const stats1 = computeWorldStats(pointsLocal, finalPosWorld, bestYaw.qWorld, scaleLocal);
+        finalPosWorld.x += avatarCenter.x - stats1.centerX;
+        finalPosWorld.z += avatarCenter.z - stats1.centerZ;
+        cloakClaspBand = "centerXZ-fallback";
+      }
+
       cloakZShift = finalPosWorld.clone().sub(bestYaw.posWorld).dot(frame.back);
     }
   }
@@ -985,7 +1022,7 @@ export function placeAccessoryByAnchorBandFit(
       backpackLike,
       capeTopDeltaY,
       finalPlacementShift,
-      cloakScaleMode: "legacy",
+      cloakScaleMode,
       cloakClaspBand,
       cloakTopCenterDensity: geom.topCenterDensity,
       cloakZShift,
