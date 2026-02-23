@@ -60,7 +60,9 @@ Canonical template used: `public/assets/roblox_male_clean_with_anchors.glb`
 - Avatar uses the same standard orientation as canonical male (facing the camera in viewer setup).
 - Body proportions are within the range where box-relative transfer is meaningful.
 
-add images here
+<img src="./images/roblox_male_anchored.png" height="300">
+<img src="./images/roblox_boy_anchored.png" height="300">
+<img src="./images/roblox_female_anchored.png" height="300">
 
 ---
 
@@ -78,7 +80,10 @@ We classify each accessory using lightweight CLIP on offscreen renders, then com
 | Model | `Xenova/clip-vit-base-patch32` |
 | Endpoint | `POST /classify` on local server |
 
-add images here.
+<img src="./images/debug_iso.png" height="150">
+<img src="./images/debug_front.png" height="150">
+<img src="./images/debug_left.png" height="150">
+<img src="./images/debug_back.png" height="150">
 
 ### Category structure
 
@@ -134,7 +139,6 @@ Uniform-only scaling, one target dimension per family.
 | `PairedMount` | width | `avatarHeight` |
 | `StrapHarness` | height | torso height |
 | `SurfaceMount` | width | shoulder width |
-| `HingeTail` | unchanged | identity scale |
 
 ## Step B: Geometry analysis + orientation + placement
 
@@ -167,9 +171,7 @@ From accessory vertices we compute:
 1. Add a shift refinement pass to actively minimize clipping and floating after initial placement.
 2. Add a placement confidence score from combined signals (classification certainty + geometric fit quality).
 3. If confidence is low, trigger guided user tuning instead of auto-accepting placement.
-4. Expand orientation search beyond quarter turns to continuous optimization.
-5. Add data-driven calibration of family tie-break weights from labeled placement outcomes.
-6. Add benchmark/test scenes with quantitative metrics for regression tracking.
+4. Add benchmark/test scenes with quantitative metrics for regression tracking.
 
 ---
 
@@ -191,4 +193,7 @@ I also tried direct geometric avatar segmentation (without relying on robust anc
 In short: these geometry-only methods were promising on realistic human meshes, but brittle on Roblox-style avatars.
 That is why this version prioritizes anchor-driven rig frames plus CLIP-assisted accessory intent classification.
 
-add images here.
+<img src="./images/anchormap1.png" height="150">
+<img src="./images/anchormap2.png" height="150">
+<img src="./images/anchormap_fail.png" height="150">
+<img src="./images/anchormap_fail2.png" height="150">
