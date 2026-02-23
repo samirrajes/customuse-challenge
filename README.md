@@ -60,9 +60,19 @@ Canonical template used: `public/assets/roblox_male_clean_with_anchors.glb`
 - Avatar uses the same standard orientation as canonical male (facing the camera in viewer setup).
 - Body proportions are within the range where box-relative transfer is meaningful.
 
-<img src="./images/roblox_male_anchored.png" height="300">
-<img src="./images/roblox_boy_anchored.png" height="300">
-<img src="./images/roblox_female_anchored.png" height="300">
+<table>
+  <tr>
+    <td align="center">
+      <img src="./images/roblox_male_anchored.png" height="250" /><br/>
+    </td>
+    <td align="center">
+      <img src="./images/roblox_boy_anchored.png" height="250" /><br/>
+    </td>
+    <td align="center">
+      <img src="./images/roblox_female_anchored.png" height="250" /><br/>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -80,10 +90,22 @@ We classify each accessory using lightweight CLIP on offscreen renders, then com
 | Model | `Xenova/clip-vit-base-patch32` |
 | Endpoint | `POST /classify` on local server |
 
-<img src="./images/debug_iso.png" height="150">
-<img src="./images/debug_front.png" height="150">
-<img src="./images/debug_left.png" height="150">
-<img src="./images/debug_back.png" height="150">
+<table>
+  <tr>
+    <td align="center">
+      <img src="./images/debug_iso.png" height="150" /><br/>
+    </td>
+    <td align="center">
+      <img src="./images/debug_front.png" height="150" /><br/>
+    </td>
+    <td align="center">
+      <img src="./images/debug_left.png" height="150" /><br/>
+    </td>
+    <td align="center">
+      <img src="./images/debug_back.png" height="150" /><br/>
+    </td>
+  </tr>
+</table>
 
 ### Category structure
 
@@ -193,7 +215,19 @@ I also tried direct geometric avatar segmentation (without relying on robust anc
 In short: these geometry-only methods were promising on realistic human meshes, but brittle on Roblox-style avatars.
 That is why this version prioritizes anchor-driven rig frames plus CLIP-assisted accessory intent classification.
 
-<img src="./images/anchormap1.png" height="150">
-<img src="./images/anchormap2.png" height="150">
-<img src="./images/anchormap_fail.png" height="150">
-<img src="./images/anchormap_fail2.png" height="150">
+<table>
+  <tr>
+    <td align="center">
+      <img src="./images/anchormap1.png" height="200" /><br/>
+    </td>
+    <td align="center">
+      <img src="./images/anchormap2.png" height="200" /><br/>
+    </td>
+    <td align="center">
+      <img src="./images/anchormap_fail.png" height="200" /><br/>
+    </td>
+    <td align="center">
+      <img src="./images/anchormap_fail2.png" height="200" /><br/>
+    </td>
+  </tr>
+</table>
